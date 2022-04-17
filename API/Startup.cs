@@ -1,5 +1,6 @@
 using System.Text;
 using API.Data;
+using API.Extensions;
 using API.Interfaces;
 using API.services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,34 +23,19 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
-            services.AddScoped<ITokenService, TokenService>();
-
+            services.AddApplicationServices(_config);
+            services.AddIdentityServices(_config);
+            services.AddControllers();            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
             });
-
-            services.AddDbContext<DataContext>(option =>
-            {
-                option.UseSqlite(_config.GetConnectionString("DefaultConnection"));
-            });
-            
+                        
             services.AddCors(option => option.AddDefaultPolicy(
                 policy => {
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
                 }
-            ));        
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(option => {
-                    option.TokenValidationParameters = new TokenValidationParameters {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"])),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
+            ));                    
 
         }
 
