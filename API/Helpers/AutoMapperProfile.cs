@@ -9,15 +9,16 @@ using AutoMapper;
 
 namespace API.Helpers
 {
-  public class AutoMapperProfile : Profile
-  {
-    public AutoMapperProfile()
+    public class AutoMapperProfile : Profile
     {
-        CreateMap<AppUser, MembersDto>()
-            .ForMember(dest => dest.PhotoUrl,opt => 
-                opt.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url))
-            .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge()));
-        CreateMap<Photo, PhotoDto>();
+        public AutoMapperProfile()
+        {
+            CreateMap<AppUser, MembersDto>()
+                .ForMember(dest => dest.PhotoUrl, opt =>
+                    opt.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url))
+                .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge()));
+            CreateMap<Photo, PhotoDto>();
+            CreateMap<MembersUpdateDto, AppUser>();
+        }
     }
-  }
 }

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.Data;
 using API.Dtos;
 using API.Entities;
@@ -14,24 +15,41 @@ namespace API.Controllers
     {
         private readonly IUserRepository _userRepsitory;
         private readonly IMapper _mapper;
-                
+
         public UsersController(IUserRepository userRepsitory, IMapper mapper)
-        {                  
+        {
             _mapper = mapper;
             _userRepsitory = userRepsitory;
         }
-        
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MembersDto>>> GetUserts()
         {
-            var users = await _userRepsitory.GetMembersAsync();            
+            var users = await _userRepsitory.GetMembersAsync();
             return Ok(users);
         }
-        
+
         [HttpGet("{username}")]
         public async Task<ActionResult<MembersDto>> GetUser(string username)
         {
-            return await _userRepsitory.GetMemberAsync(username);            
+            return await _userRepsitory.GetMemberAsync(username);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(MembersUpdateDto membersUpdateDto)
+        {
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _userRepsitory.GetUserByUsernameAsync(username);
+
+            _mapper.Map(membersUpdateDto, user);
+            _userRepsitory.Update(user);
+
+            if (await _userRepsitory.SaveAllChangesAsync())
+            {
+                return NoContent();
+            }
+
+            return BadRequest("Problem With Update User");
         }
     }
 }
