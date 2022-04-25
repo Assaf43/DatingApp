@@ -18,6 +18,12 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     NgxGalleryModule,
     NgxSpinnerModule,
   ],
-  exports: [BsDropdownModule, ToastrModule, TabsModule, NgxGalleryModule,NgxSpinnerModule,],
+  exports: [
+    BsDropdownModule,
+    ToastrModule,
+    TabsModule,
+    NgxGalleryModule,
+    NgxSpinnerModule,
+  ],
 })
 export class SharedModule {}
